@@ -5,3 +5,7 @@
 1. Прямые запросы на API amoCRM (для тех, кто любит все контролировать самостоятельно)
 2. Создание/обновление контактов в amoCRM
 3. ...
+
+
+Шаблон с примерами "Внешних запросов"
+https://messenger.smartsender.com/t/lDJQ1df9Y2YBSpYJ5WWleoa7FHBb2mbYKMZ0SmCn
