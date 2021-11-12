@@ -59,7 +59,6 @@ if ($sendMessage2["watermark"] == 2) {
     $Send2 = json_decode(send_bearer("https://api.smartsender.com/v1/contacts/".$userId."/send", $ss_token, "POST", $sendMessage2), true);
     $result["send2"] = $Send2;
 }
-send_forward(json_encode($result), $log_url);
 
 
 
