@@ -52,18 +52,33 @@ if ($userData["error"] != NULL) {
     echo $userDataJSON;
     exit;
 }
-$userMessage = json_decode(send_bearer("https://api.smartsender.com/v1/contacts/".$input["userId"]."/messages?page=1&limitation=20", $ss_token), true);
-if (is_array($userMessage["error"]) === true) {
+if ($input["message"] === false) {
+    if ($input["text"] == NULL) {
+        $result["state"] = false;
+        $result["message"]["text"] = "text is missing, or message is not false";
+        http_response_code(422);
+        echo json_encode($result);
+        exit;
+    }
     $sendMessage["payload"]["message"]["type"] = "text";
-    $sendMessage["payload"]["message"]["text"] = "Невозможно прочитать сообщение. Проблемы в API Smart Sender, или сообщения у пользователя отсутствуют";
-} else if ($userMessage["collection"][0]["content"]["type"] == "text") {
-    $sendMessage["payload"]["message"]["type"] = "text";
-    $sendMessage["payload"]["message"]["text"] = $userMessage["collection"][0]["content"]["resource"]["parameters"]["content"];
-    $sendMessage["payload"]["message"]["keyboard"]["mode"] = "inline";
-    $sendMessage["payload"]["message"]["keyboard"]["buttons"][][]["text"] = "inline";
+    $sendMessage["payload"]["message"]["text"] = $input["text"];
 } else {
-    $sendMessage["payload"]["message"]["type"] = "text";
-    $sendMessage["payload"]["message"]["text"] = "Невозможно прочитать сообщение. Сообщение у пользователя отсутствует или не является текстом";
+    $userMessage = json_decode(send_bearer("https://api.smartsender.com/v1/contacts/".$input["userId"]."/messages?page=1&limitation=20", $ss_token), true);
+    if (is_array($userMessage["error"]) === true) {
+        $sendMessage["payload"]["message"]["type"] = "text";
+        $sendMessage["payload"]["message"]["text"] = "Невозможно прочитать сообщение. Проблемы в API Smart Sender, или сообщения у пользователя отсутствуют";
+    } else if ($userMessage["collection"][0]["content"]["type"] == "text") {
+        $sendMessage["payload"]["message"]["type"] = "text";
+        $sendMessage["payload"]["message"]["text"] = $userMessage["collection"][0]["content"]["resource"]["parameters"]["content"];
+        if ($input["text"] != NULL) {
+            $sendMessage["payload"]["message"]["text"] = $input["text"]."\n\n".$sendMessage["payload"]["message"]["text"];
+        }
+        $sendMessage["payload"]["message"]["keyboard"]["mode"] = "inline";
+        $sendMessage["payload"]["message"]["keyboard"]["buttons"][][]["text"] = "inline";
+    } else {
+        $sendMessage["payload"]["message"]["type"] = "text";
+        $sendMessage["payload"]["message"]["text"] = "Невозможно прочитать сообщение. Сообщение у пользователя отсутствует или не является текстом";
+    }
 }
 $sendMessage["payload"]["msgid"] = mt_rand(10000000000000, 99999999999999);
 settype ($sendMessage["payload"]["msgid"], "string");
@@ -75,38 +90,24 @@ $sendMessage["payload"]["conversation_id"] = $input["userId"];
 $sendMessage["payload"]["sender"]["id"] = $input["userId"];
 $sendMessage["payload"]["sender"]["name"] = $userData["fullName"];
 $sendMessage["payload"]["sender"]["avatar"] = $userData["photo"];
-
-
 $createChat["conversation_id"] = $input["userId"];
 $createChat["user"]["id"] = $input["userId"];
 $createChat["user"]["ref_id"] = $user["amoid"];
 $createChat["user"]["name"] = $userData["fullName"];
 $createChat["user"]["avatar"] = $userData["photo"];
-
 $sendCreateChat = json_decode(send_sha1_signature("POST", json_encode($createChat), "https://amojo.amocrm.ru/v2/origin/custom/".$access["scope_id"]."/chats", $amojo_secret), true);
-
-
 $sendMessage["payload"]["sender"]["ref_id"] = $sendCreateChat["user"]["id"];
-
 $addChat[0]["chat_id"] = $sendCreateChat["id"];
 $addChat[0]["contact_id"] = $user["amoid"];
 settype($addChat[0]["contact_id"], "int");
 $syncChat = json_decode(send_bearer($amo_url."/api/v4/contacts/chats", $access["token"], "POST", $addChat), true);
-$result["syncChat"] = $syncChat;
-$result["addChat"] = $addChat;
-
-$result["createChat"] = $sendCreateChat;
-
 $SendMessage = json_decode(send_sha1_signature("POST", json_encode($sendMessage), "https://amojo.amocrm.ru/v2/origin/custom/".$access["scope_id"], $amojo_secret), true);
-$result["sendMessage"] = $sendMessage;
-$result["SendMessage"] = $SendMessage;
-
 if ($SendMessage["new_message"]["msgid"] != NULL) {
     $otvet["state"] = true;
 } else {
     $otvet["state"] = false;
 }
-echo json_encode($result);
+echo json_encode($otvet);
 
 
 
