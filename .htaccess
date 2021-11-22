@@ -1,0 +1,4 @@
+RewriteEngine On
+RewriteBase /
+RewriteRule ^([^\.]+)$ $1.php
+RewriteRule .* - [e=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
