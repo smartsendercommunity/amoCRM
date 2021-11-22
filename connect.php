@@ -127,7 +127,7 @@ if (stripos($_SERVER["PHP_SELF"], "connect") !== false) {
     https://www.amocrm.ru/developers/content/chats/chat-capabilities#chats-cap-channel-register
         
     1. Smart Sender
-    2. ".$url."/chats?scope=:scope_id
+    2. ".$url."/chats.php?scope=:scope_id
     3. Аккаунт: ".$access["id"]."
     4. Не включать
     5. (Укажите свою почту)
