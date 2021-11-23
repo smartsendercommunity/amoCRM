@@ -46,6 +46,14 @@ if ($input["type"] == "text") {
         $sendMessage2["type"] = "text";
         $sendMessage2["content"] = $input["text"];
     }
+} else if ($input["type"] = "video") {
+    $sendMessage["type"] = "video";
+    $sendMessage["media"] = $input["media"];
+    if ($input["text"] != "") {
+        $sendMessage2["watermark"] = 2;
+        $sendMessage2["type"] = "text";
+        $sendMessage2["content"] = $input["text"];
+    }
 }
 
 $Send = json_decode(send_bearer("https://api.smartsender.com/v1/contacts/".$userId."/send", $ss_token, "POST", $sendMessage), true);
