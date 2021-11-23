@@ -16,7 +16,7 @@
 
 
 Шаблон с примерами "Внешних запросов"
-https://messenger.smartsender.com/t/lDJQ1df9Y2YBSpYJ5WWleoa7FHBb2mbYKMZ0SmCn
+https://smartsender.com/experts/20/templates/95
 
 
 Инструкция:
