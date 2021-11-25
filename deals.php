@@ -83,12 +83,24 @@ if (is_array($input["fields"]) === true) {
     if (is_array($amoDealFields["_embedded"]["custom_fields"]) === true) {
         foreach ($amoDealFields["_embedded"]["custom_fields"] as $oneDealFields) {
             $dealFields[$oneDealFields["name"]] = $oneDealFields["id"];
+            $dealFieldsType[$oneDealFields["name"]] = $oneDealFields["type"];
         }
     }
     foreach ($input["fields"] as $fieldsKey => $fieldsValue) {
         if ($dealFields[$fieldsKey] != NULL) {
             $customFields["field_id"] = $dealFields[$fieldsKey];
-            $customFields["values"][0]["value"] = $fieldsValue;
+            if ($dealFieldsType[$fieldsKey] == "numeric") {
+                $customFields["values"][0]["value"] = str_replace(" ", "", str_replace(",", ".", $fieldsValue));
+                settype($customFields["values"][0]["value"], "float");
+            } else if ($dealFieldsType[$fieldsKey] == "date" || $dealFieldsType[$fieldsKey] == "date_time" || $dealFieldsType[$fieldsKey] == "birthday") {
+                $customFields["values"][0]["value"] = strtotime($fieldsValue);
+            } else if ($dealFieldsType[$fieldsKey] == "multiselect" && is_array($fieldsValue)) {
+                foreach ($fieldsValue as $oneFieldsValue) {
+                    $customFields["values"][]["value"] = $oneFieldsValue;
+                }
+            } else {
+                $customFields["values"][0]["value"] = $fieldsValue;
+            }
             $dealData["custom_fields_values"][] = $customFields;
             unset ($customFields);
         }
