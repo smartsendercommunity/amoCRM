@@ -65,12 +65,20 @@ if (is_array($input["fields"]) === true) {
     if (is_array($amoContactFields["_embedded"]["custom_fields"]) === true) {
         foreach ($amoContactFields["_embedded"]["custom_fields"] as $oneContactFields) {
             $contactFields[$oneContactFields["name"]] = $oneContactFields["id"];
+            $contactFieldsType[$oneContactFields["name"]] = $oneContactFields["type"];
         }
     }
     foreach ($input["fields"] as $fieldsKey => $fieldsValue) {
         if ($contactFields[$fieldsKey] != NULL) {
             $customFields["field_id"] = $contactFields[$fieldsKey];
-            $customFields["values"][0]["value"] = $fieldsValue;
+            if ($userFieldsType[$fieldKey] == "numeric") {
+                $customField["values"][0]["value"] = str_replace(" ", "", (str_replace(",", ".", $fieldsValue));
+                settype($customField["values"][0]["value"], "float");
+            } else if ($userFieldsType[$fieldKey] == "date" || $userFieldsType[$fieldKey] == "date_time" || $userFieldsType[$fieldKey] == "birthday") {
+                $customField["values"][0]["value"] = strtotime($fieldValue);
+            } else {
+                $customFields["values"][0]["value"] = $fieldsValue;
+            }
             $userData["custom_fields_values"][] = $customFields;
             unset ($customFields);
         }
