@@ -71,11 +71,15 @@ if (is_array($input["fields"]) === true) {
     foreach ($input["fields"] as $fieldsKey => $fieldsValue) {
         if ($contactFields[$fieldsKey] != NULL) {
             $customFields["field_id"] = $contactFields[$fieldsKey];
-            if ($userFieldsType[$fieldKey] == "numeric") {
-                $customField["values"][0]["value"] = str_replace(" ", "", str_replace(",", ".", $fieldsValue));
-                settype($customField["values"][0]["value"], "float");
-            } else if ($userFieldsType[$fieldKey] == "date" || $userFieldsType[$fieldKey] == "date_time" || $userFieldsType[$fieldKey] == "birthday") {
-                $customField["values"][0]["value"] = strtotime($fieldValue);
+            if ($contactFieldsType[$fieldsKey] == "numeric") {
+                $customFields["values"][0]["value"] = str_replace(" ", "", str_replace(",", ".", $fieldsValue));
+                settype($customFields["values"][0]["value"], "float");
+            } else if ($contactFieldsType[$fieldsKey] == "date" || $contactFieldsType[$fieldsKey] == "date_time" || $contactFieldsType[$fieldsKey] == "birthday") {
+                $customFields["values"][0]["value"] = strtotime($fieldsValue);
+            } else if ($contactFieldsType[$fieldsKey] == "multiselect" && is_array($fieldsValue)) {
+                foreach ($fieldsValue as $oneFieldsValue) {
+                    $customFields["values"][]["value"] = $oneFieldsValue;
+                }
             } else {
                 $customFields["values"][0]["value"] = $fieldsValue;
             }
