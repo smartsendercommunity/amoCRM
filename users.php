@@ -93,6 +93,10 @@ $customFields["values"][0]["value"] = $input["userId"];
 $userData["custom_fields_values"][] = $customFields;
 unset ($customFields);
 if (is_array($input["tags"]) === true) {
+    if ($input["clearTags"] !== true && $userAmoId != NULL) {
+        $getUserData = json_decode(send_bearer($amo_url."/api/v4/contacts/".$userAmoId, $access["token"]), true);
+        $userData["_embedded"]["tags"] = $getUserData["_embedded"]["tags"];
+    }
     foreach ($input["tags"] as $oneTag) {
         $userData["_embedded"]["tags"][]["name"] = $oneTag;
     }
