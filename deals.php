@@ -44,8 +44,8 @@ if ($input["name"] != NULL) {
     $dealData["name"] = $input["name"];
 }
 if ($input["price"] != NULL) {
-    $dealData["price"] = $input["price"];
-    settype($dealData, "int");
+    $dealData["price"] = str_replace(" ", "", str_replace(",", ".", $input["price"]));
+    settype($dealData["price"], "int");
 }
 if ($input["pipeline"] != NULL) {
     $getPipelines = json_decode(send_bearer($amo_url."/api/v4/leads/pipelines", $access["token"]), true);
