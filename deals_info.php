@@ -1,8 +1,8 @@
 <?php
 
 // v1   10.11.2021
-// Powered by M-Soft
-// https://t.me/mufik
+// Powered by Smart Sender
+// https://smartsender.com
 
 ini_set('max_execution_time', '1700');
 set_time_limit(1700);
