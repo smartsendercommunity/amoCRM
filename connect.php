@@ -20,14 +20,6 @@ $input = json_decode(file_get_contents('php://input'), true);
 include ('config.php');
 include ('functions.php');
 
-$log["time"] = time();
-$log["date"] = date("Y-m-d H:i:s");
-$log["request"]["get"] = $_GET;
-$log["request"]["post"] = $_POST;
-$log["request"]["json"] = $input;
-
-send_forward(json_encode($log), $log_url);
-
 //-------------
 
 // Получение (обновление) Access Token
