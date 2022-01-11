@@ -11,7 +11,6 @@ $amojo_secret = "";
 $ss_token = "";
 
 // Сервысные данные
-$log_url = "https://webhook.site/amo-ss";
 $dir = dirname($_SERVER["PHP_SELF"]);
 $url = ((!empty($_SERVER["HTTPS"])) ? "https" : "http") . "://" . $_SERVER["HTTP_HOST"] . $dir;
 $url = explode("?", $url);
