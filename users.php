@@ -1,8 +1,8 @@
 <?php
 
 // v1   10.11.2021
-// Powered by Smart Sender
-// https://smartsender.com
+// Powered by M-Soft
+// https://t.me/mufik
 
 ini_set('max_execution_time', '1700');
 set_time_limit(1700);
@@ -39,6 +39,22 @@ if (file_exists('users.json') === true) {
 }
 if ($users[$input["userId"]] != NULL) {
     $userAmoId = $users[$input["userId"]];
+} else if ($input["contactId"] != NULL) {
+    $getContacts = json_decode(send_bearer($amo_url."/api/v4/contacts/".$input["contactId"], $access["token"]), true);
+    $checkId = true;
+    if (is_array($getContacts["custom_fields_values"]) === true) {
+        foreach ($getContacts["custom_fields_values"] as $contactFields) {
+            if ($contactFields["field_id"] == $access["ssId"]) {
+                $checkId = false;
+                break;
+            }
+        }
+    }
+    if ($checkId === true) {
+        $userAmoId = $input["contactId"];
+        $users[$input["userId"]] = $userAmoId;
+        file_put_contents("users.json", json_encode($users));
+    }
 }
 if ($input["fullName"] != NULL) {
     $userData["name"] = $input["fullName"];
@@ -83,6 +99,9 @@ if (is_array($input["fields"]) === true) {
             } else {
                 $customFields["values"][0]["value"] = $fieldsValue;
             }
+            if ($customFields["values"][0]["value"] == "") {
+                $customFields["values"][0]["value"] = null;
+            }
             $userData["custom_fields_values"][] = $customFields;
             unset ($customFields);
         }
@@ -105,8 +124,17 @@ if (is_array($input["tags"]) === true) {
 // Обновление/создание контакта в amoCRM
 if ($userAmoId != NULL) {
     $updateContact = json_decode(send_bearer($amo_url."/api/v4/contacts/".$userAmoId, $access["token"], "PATCH", $userData), true);
-    $result["update"] = $updateContact;
-    $result["send"] = $userData;
+    if ($updateContact["errors"][$userAmoId] == "Contact not found") {
+        $usersData[] = $userData;
+        $createContact = json_decode(send_bearer($amo_url."/api/v4/contacts", $access["token"], "POST", $usersData), true);
+        if ($createContact["_embedded"]["contacts"][0]["id"] != NULL) {
+            $users[$input["userId"]] = $createContact["_embedded"]["contacts"][0]["id"];
+            file_put_contents("users.json", json_encode($users));
+        }
+        $result = $createContact;
+    } else {
+        $result = $updateContact;
+    }
 } else {
     $usersData[] = $userData;
     $createContact = json_decode(send_bearer($amo_url."/api/v4/contacts", $access["token"], "POST", $usersData), true);
@@ -114,8 +142,7 @@ if ($userAmoId != NULL) {
         $users[$input["userId"]] = $createContact["_embedded"]["contacts"][0]["id"];
         file_put_contents("users.json", json_encode($users));
     }
-    $result["create"] = $createContact;
-    $result["send"] = $usersData;
+    $result = $createContact;
 }
 
 echo json_encode($result);
