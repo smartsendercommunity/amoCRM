@@ -88,7 +88,7 @@ if ($access["ssId"] == NULL) {
     file_put_contents("access.json", json_encode($access));
 } else {
     $getFields = json_decode(send_bearer($amo_url."/api/v4/contacts/custom_fields/".$access["ssId"], $access["token"]), true);
-    if ($access["ssId"] != $getFields["id"]) {
+    if ($getFields["status"] == "404") {
         $createFields["type"] = "text";
         $createFields["name"] = "ssId";
         $createFields["is_api_only"] = true;
