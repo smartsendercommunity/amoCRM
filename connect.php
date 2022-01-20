@@ -46,12 +46,6 @@ if (file_exists("access.json") === true) {
             exit;
         }
     }
-    $accountJSON = send_bearer($amo_url.'/api/v4/account?with=amojo_id', $access["token"]);
-    $account_info = json_decode($accountJSON, true);
-    $access["account"] = $account_info["name"];
-    $access["id"] = $account_info["id"];
-    $access["amojo_id"] = $account_info["amojo_id"];
-    file_put_contents("access.json", json_encode($access));
 } else {
     $amo_send["client_id"] = $amo_id;
     $amo_send["client_secret"] = $amo_key;
@@ -86,19 +80,7 @@ if ($access["ssId"] == NULL) {
     $resultCreate = json_decode(send_bearer($amo_url."/api/v4/contacts/custom_fields", $access["token"], "POST", $createFields), true);
     $access["ssId"] = $resultCreate["id"];
     file_put_contents("access.json", json_encode($access));
-} else {
-    $getFields = json_decode(send_bearer($amo_url."/api/v4/contacts/custom_fields/".$access["ssId"], $access["token"]), true);
-    if ($getFields["status"] == "404") {
-        $createFields["type"] = "text";
-        $createFields["name"] = "ssId";
-        $createFields["is_api_only"] = true;
-        $resultCreate = json_decode(send_bearer($amo_url."/api/v4/contacts/custom_fields", $access["token"], "POST", $createFields), true);
-        $access["ssId"] = $resultCreate["id"];
-        file_put_contents("access.json", json_encode($access));
-    }
 }
-
-
 
 if (stripos($_SERVER["PHP_SELF"], "connect") !== false) {
     if ($access["account"] != NULL) {
@@ -112,6 +94,12 @@ if (stripos($_SERVER["PHP_SELF"], "connect") !== false) {
 
     echo PHP_EOL.PHP_EOL;
     if ($access["scope_id"] == NULL) {
+        $accountJSON = send_bearer($amo_url.'/api/v4/account?with=amojo_id', $access["token"]);
+        $account_info = json_decode($accountJSON, true);
+        $access["account"] = $account_info["name"];
+        $access["id"] = $account_info["id"];
+        $access["amojo_id"] = $account_info["amojo_id"];
+        file_put_contents("access.json", json_encode($access));
         if ($access["amojo_id"] == NULL || $amojo_channel == NULL) {
             echo "  Чтобы получить доступ к чатам в amoCRM отправте в поддержку следующее сообщение:".PHP_EOL.PHP_EOL;
             echo "
@@ -143,6 +131,7 @@ if (stripos($_SERVER["PHP_SELF"], "connect") !== false) {
         echo "  Доступ к чатам в amoCRM имеется";
     }
 }
+sleep(1);
 
 
 
