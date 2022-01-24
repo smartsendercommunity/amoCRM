@@ -28,6 +28,7 @@ if ($input["userId"] == NULL) {
     }
     if ($users[$input["userId"]] != NULL) {
         $dealData["_embedded"]["contacts"][0]["id"] = $users[$input["userId"]];
+        settype($dealData["_embedded"]["contacts"][0]["id"], "int");
     } else {
         $result["state"] = false;
         $result["message"]["userId"] = "user not found. Please, create user";
