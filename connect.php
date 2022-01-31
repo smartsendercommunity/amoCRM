@@ -114,7 +114,7 @@ if (stripos($_SERVER["PHP_SELF"], "connect") !== false) {
     6. (Укажите свою почту)
     7. ".$url."/logo.svg
     8. ".$amo_id."
-    9. Без использования \"Виджета\"
+    9. Smart Sender
     10. Для личного использования";
         } else {
             $amojo_send["account_id"] = $access["amojo_id"];
