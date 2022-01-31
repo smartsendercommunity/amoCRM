@@ -110,10 +110,12 @@ if (stripos($_SERVER["PHP_SELF"], "connect") !== false) {
     2. ".$url."/chats.php?scope=:scope_id
     3. Аккаунт: ".$access["id"]."
     4. Не включать
-    5. (Укажите свою почту)
-    6. ".$url."/logo.svg
-    7. ".$amo_id."
-    8. Для личного использования";
+    5. Без поддержки \"временного окна\"
+    6. (Укажите свою почту)
+    7. ".$url."/logo.svg
+    8. ".$amo_id."
+    9. Без использования \"Виджета\"
+    10. Для личного использования";
         } else {
             $amojo_send["account_id"] = $access["amojo_id"];
             $amojo_send["title"] = "Smart Sender";
