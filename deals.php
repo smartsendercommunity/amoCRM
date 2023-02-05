@@ -123,12 +123,14 @@ if (is_array($input["tags"]) === true) {
 // Создание/обновление сделки
 if ($input["dealId"] != NULL) {
     $updateDeal = json_decode(send_bearer($amo_url."/api/v4/leads/".$input["dealId"], $access["token"], "PATCH", $dealData), true);
-    $result["update"] = $updateDeal;
+    $result["action"] = "update";
+    $result["result"] = $updateDeal;
     $result["send"] = $dealData;
 } else {
     $dealsData[] = $dealData;
     $createDeal = json_decode(send_bearer($amo_url."/api/v4/leads", $access["token"], "POST", $dealsData), true);
-    $result["create"] = $createDeal;
+    $result["action"] = "create";
+    $result["result"] = $createDeal;
     $result["send"] = $dealsData;
 }
 
