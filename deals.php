@@ -112,7 +112,7 @@ if (is_array($input["tags"]) === true) {
         $getDealData = json_decode(send_bearer($amo_url."/api/v4/leads/".$input["dealId"], $access["token"]), true);
         $dealData["_embedded"]["tags"] = $getDealData["_embedded"]["tags"];
         foreach ($dealData["_embedded"]["tags"] as &$tempTag) {
-            unset($tempTag["color"];
+            unset($tempTag["color"]);
         }
     }
     foreach ($input["tags"] as $oneTag) {
