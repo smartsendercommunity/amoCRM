@@ -19,19 +19,23 @@ http_response_code(200);
 include('connect.php');
 
 // Проверка наличия всех обезательных полей
-if ($input["userId"] == NULL) {
-    $result["state"] = false;
-    $result["message"]["userId"] = "userId is missing";
-} else {
-    if (file_exists('users.json') === true) {
-        $users = json_decode(file_get_contents('users.json'), true);
-    }
-    if ($users[$input["userId"]] != NULL) {
-        $userId = $users[$input["userId"]];
-    } else {
+if ($input["contactId"] == NULL ){
+    if ($input["userId"] == NULL) {
         $result["state"] = false;
-        $result["message"]["userId"] = "user not found. Please, create user";
+        $result["message"]["userId"] = "userId is missing";
+    } else {
+        if (file_exists('users.json') === true) {
+            $users = json_decode(file_get_contents('users.json'), true);
+        }
+        if ($users[$input["userId"]] != NULL) {
+            $userId = $users[$input["userId"]];
+        } else {
+            $result["state"] = false;
+            $result["message"]["userId"] = "user not found. Please, create user";
+        }
     }
+} else {
+    $userId = $input["contactId"];
 }
 if ($result["state"] === false) {
     http_response_code(422);
