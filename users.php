@@ -148,6 +148,11 @@ if ($userAmoId != NULL) {
     $result = $createContact;
 }
 
+if ($result["id"] != NULL) {
+    $result["contactId"] = $result["id"];
+} else if ($result["_embedded"]["contacts"][0]["id"] != NULL) {
+    $result["contactId"] = $result["_embedded"]["contacts"][0]["id"];
+}
 echo json_encode($result);
 
 
